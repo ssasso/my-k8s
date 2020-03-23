@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: empty1
+spec:
+    selector:
+        matchLabels:
+            app: empty1
+    template:
+        metadata:
+            labels:
+                app: empty1
+        spec:
+            containers:
+            -   image: errm/randserver
+                name: empty1
+                volumeMounts:
+                -   mountPath: /data
+                    name: data
+                securityContext:
+                    readOnlyRootFilesystem: true
+            volumes:
+            -   name: data
+                emptyDir: {}
+
