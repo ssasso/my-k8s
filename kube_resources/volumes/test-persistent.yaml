@@ -13,7 +13,7 @@ spec:
         spec:
             containers:
             -   image: errm/randserver
-                name: empty1
+                name: randserver
                 volumeMounts:
                 -   mountPath: /data
                     name: data
