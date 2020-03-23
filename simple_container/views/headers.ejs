@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Hey</title>
+</head>
+<body>
+	<h1>HTTP Headers</h1>
+	<ul>
+		<% for(k in h) { %>
+		<li><b><%- k %></b>: <%- h[k] %></li>
+		<% } %>
+	</ul>
+</body>
+</html>

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple
+spec:
+  selector:
+    matchLabels:
+      app: simple
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: simple
+    spec:
+      containers:
+      - name: app
+        image: ssasso/simple:2
+        ports:
+          - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "128m"
+          limits:
+            memory: "256Mi"
+            cpu: "256m"
