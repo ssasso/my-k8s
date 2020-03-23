@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require "tmpdir"
+require "webrick"
+require "fileutils"
+require "securerandom"
+
+DOC_ROOT = "/data"
+
+FileUtils.mkdir_p DOC_ROOT
+
+File.write(File.join(DOC_ROOT, "#{SecureRandom.hex(6)}.txt"), SecureRandom.hex(256))
+
+WEBrick::HTTPServer.new(:Port => 3000, :DocumentRoot => DOC_ROOT).start
