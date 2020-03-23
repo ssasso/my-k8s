@@ -1,5 +1,5 @@
 # my-k8s
-My K8S Clustering on VMWare
+My K8S Cluster on VMWare
 
 * VM deployed from a template using Terraform
 * Cluster deployed via KubeSpray
