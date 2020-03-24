@@ -1,0 +1,14 @@
+{
+  "name": "live_check",
+  "version": "1.0.0",
+  "description": "Simple Node.js on Docker",
+  "author": "Stefano Sasso <stesasso@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1",
+    "moment": ""
+  }
+}
