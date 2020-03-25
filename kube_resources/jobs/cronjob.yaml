@@ -1,0 +1,22 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: hello-cron
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: hello-cron
+        spec:
+          containers:
+          - name: hello-cron
+            image: alpine
+            command:
+            - "/bin/ash"
+            - "-c"
+            - "echo Hello There ; date"
+          restartPolicy: OnFailure
+

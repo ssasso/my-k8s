@@ -4,7 +4,7 @@
 * [x] Test Auto Scaling
 * [x] Simple Network Policy
 * [x] Basic container health / liveness check
-* [ ] Jobs and Crons ( https://kubernetesbyexample.com/jobs/ )
+* [x] Jobs and Crons
 * [ ] Sidecar and Init containers ( https://kubernetesbyexample.com/ic/ )
 * [ ] Secrets (i.e. https://kubernetesbyexample.com/secrets/ )
 * [ ] re-deploy cluster, and write steps also for installing ingress (and check docker params)
