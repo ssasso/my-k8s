@@ -1,0 +1,13 @@
+{
+  "name": "fiboweb",
+  "version": "1.0.0",
+  "description": "Fibonacci WebServer",
+  "author": "Stefano Sasso <stesasso@gmail.com>",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.16.1"
+  }
+}
