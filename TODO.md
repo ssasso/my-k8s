@@ -17,10 +17,10 @@
 * [ ] HAProxy ingress
 * [ ] Health check from Ingress (??)
 * [ ] Read more about Calico (and Kubespray config for it)
-    * keep in mind integration with MetalLB
-* Read and try existing "Operators":
+    * [ ] keep in mind integration with MetalLB
+* [ ] Read and try existing "Operators":
     * [ ] MongoDB replicaset
-    * [] MySQL Cluster
+    * [ ] MySQL Cluster
     * [ ] PostgreSQL Cluster
     * [ ] ElasticSearch
 * [ ] HELM
