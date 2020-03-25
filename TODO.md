@@ -5,7 +5,8 @@
 * [x] Simple Network Policy
 * [x] Basic container health / liveness check
 * [x] Jobs and Crons
-* [ ] Sidecar and Init containers ( https://kubernetesbyexample.com/ic/ )
+* [x] Init containers
+* [ ] Sidecar containers
 * [ ] Secrets (i.e. https://kubernetesbyexample.com/secrets/ )
 * [ ] re-deploy cluster, and write steps also for installing ingress (and check docker params)
 * [ ] re-deploy cluster, using HAProxy as API load balancer (see: https://github.com/sguyennet/terraform-vsphere-kubespray )
