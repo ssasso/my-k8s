@@ -4,7 +4,9 @@
 * [x] Test Auto Scaling
 * [x] Simple Network Policy
 * [x] Basic container health / liveness check
-* [ ] Jobs and Crons
+* [ ] Jobs and Crons ( https://kubernetesbyexample.com/jobs/ )
+* [ ] Sidecar and Init containers ( https://kubernetesbyexample.com/ic/ )
+* [ ] Secrets (i.e. https://kubernetesbyexample.com/secrets/ )
 * [ ] re-deploy cluster, and write steps also for installing ingress (and check docker params)
 * [ ] re-deploy cluster, using HAProxy as API load balancer (see: https://github.com/sguyennet/terraform-vsphere-kubespray )
 * [ ] worker down detector
