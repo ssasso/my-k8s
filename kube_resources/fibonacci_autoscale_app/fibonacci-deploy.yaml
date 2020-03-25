@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibonacci
+spec:
+  selector:
+    matchLabels:
+      app: fibonacci
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: fibonacci
+    spec:
+      containers:
+      - name: fibonacci
+        image: ssasso/fiboweb
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 3000
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "128m"
+          limits:
+            memory: "256Mi"
+            cpu: "2"
