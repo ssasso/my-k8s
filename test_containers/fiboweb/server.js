@@ -33,7 +33,8 @@ app.get('/fibonacci/:n', function(req, res) {
     console.log(`fib(${n}) = ${r}`);
     res.send({
         'n': n,
-        'fib(n)': r
+        'fib(n)': r,
+        'server': os.hostname()
     });
 });
 
