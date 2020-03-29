@@ -6,6 +6,8 @@
 * [x] Basic container health / liveness check
 * [x] Jobs and Crons
 * [x] Init containers
+* [x] MetalLB Layer 2 and BGP integration
+    * [x] ECMP ingress routing
 * [ ] Sidecar containers
 * [ ] Secrets (i.e. https://kubernetesbyexample.com/secrets/ )
 * [ ] re-deploy cluster, and write steps also for installing ingress (and check docker params)
