@@ -29,3 +29,9 @@
     * [ ] ElasticSearch
 * [ ] HELM
 * [ ] Kustomize
+* [ ] Multus CNI / Calico / Cilium
+* [ ] Envoy Ingress
+* [ ] KubeVirt / KubeEdge
+* [ ] K8S and VRF segmentation
+* [ ] Cluster with multiple overlay/underlay
+* [ ] Geo clustering, clustering interconnect
