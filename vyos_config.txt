@@ -1,0 +1,116 @@
+interfaces {
+    ethernet eth0 {
+        address 172.17.13.251/24
+        description Backbone
+        hw-id 00:0c:29:c9:2c:4e
+    }
+    ethernet eth1 {
+        description Inside
+        hw-id 00:0c:29:c9:2c:58
+        vif 132 {
+            address 172.23.132.1/24
+        }
+    }
+    loopback lo {
+    }
+}
+protocols {
+    bgp 501 {
+        neighbor 172.23.132.101 {
+            peer-group METAL
+        }
+        neighbor 172.23.132.102 {
+            peer-group METAL
+        }
+        neighbor 172.23.132.103 {
+            peer-group METAL
+        }
+        neighbor 172.23.132.104 {
+            peer-group METAL
+        }
+        parameters {
+            graceful-restart {
+            }
+            router-id 172.23.132.1
+        }
+        peer-group METAL {
+            address-family {
+                ipv4-unicast {
+                    default-originate {
+                    }
+                    soft-reconfiguration {
+                        inbound
+                    }
+                }
+            }
+            ebgp-multihop 2
+            passive
+            remote-as 502
+        }
+    }
+    static {
+        route 0.0.0.0/0 {
+            next-hop 172.17.13.1 {
+            }
+        }
+        route 172.23.128.0/24 {
+            next-hop 172.17.13.250 {
+            }
+        }
+    }
+}
+service {
+    dns {
+        forwarding {
+            allow-from 172.23.132.0/22
+            listen-address 172.23.132.1
+            name-server 172.17.6.11
+            name-server 172.17.6.12
+        }
+    }
+    ssh {
+        port 22
+    }
+}
+system {
+    config-management {
+        commit-revisions 100
+    }
+    console {
+        device ttyS0 {
+            speed 115200
+        }
+    }
+    host-name vyos
+    login {
+        user vyos {
+            authentication {
+                encrypted-password ****************
+                plaintext-password ****************
+            }
+        }
+    }
+    ntp {
+        server 0.pool.ntp.org {
+        }
+        server 1.pool.ntp.org {
+        }
+        server 2.pool.ntp.org {
+        }
+        server 172.17.140.100 {
+        }
+        server 172.17.140.222 {
+        }
+    }
+    syslog {
+        global {
+            facility all {
+                level info
+            }
+            facility protocols {
+                level debug
+            }
+        }
+    }
+}
+
