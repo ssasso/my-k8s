@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mycnisample
+  annotations:
+    k8s.v1.cni.cncf.io/networks: mycni
+    my.cni/ip: 10.20.30.40
+spec:
+  containers:
+  - name: mycnisample
+    command: ["/bin/sh", "-c", "sleep 2000000000000"]
+    image: alpine
+  nodeSelector:
+    kubernetes.io/hostname: k-worker-2
+

@@ -1,0 +1,139 @@
+#!/bin/bash
+
+# DEPENDENCIES
+# - kubectl
+# - curl
+# - jq
+
+# We need to be very careful with stdout because kubernetes wants valid json
+# So we going to save it
+exec 6>&1
+
+# and replace stdout with logfile
+LOGFILE=/tmp/my-cni.log
+exec &>> $LOGFILE
+
+# functions
+# -- Helpers
+get_pod            () { while read line; do [[ ${line/=*/} == "K8S_POD_NAME" ]] && echo ${line/*=/} || :; done; }
+get_pod_ns         () { while read line; do [[ ${line/=*/} == "K8S_POD_NAMESPACE" ]] && echo ${line/*=/} || :; done; }
+get_tenant         () { while read line; do [[ ${line/=*/} == "owner" ]] && echo ${line/*=/} || :; done; }
+get_json_kv        () { sed 's/["{}]//g' | xargs -d "," -n1; }
+get_nspid          () { echo $1 | awk -F"/" '{ print $3 }'; }
+get_ip             () { while read line; do [[ ${line/:*/} == "ip" ]] && echo ${line/*:/} || :; done; }
+get_args           () { echo $CNI_ARGS | xargs -d";" -n1 ;}
+get_config_item    () { echo $INPUT | jq -r ".${1}"; }
+log                () { echo "$*"; }
+log_env            () { env; }
+
+jqempty () {
+    jq -r 'if .${1} then .${1} else empty end'
+}
+
+die () {
+    echo $1
+    # Restore stdout - before reporting an error to Kube
+    exec 1>&6
+
+    printf '{ "Error": "%s" }' "$1"
+    exit $2
+}
+
+trap "die 'CNI plugin - Unexpected error'" EXIT
+
+# -- Config
+# Kubernetes pases config via stdin
+INPUT=`cat /dev/stdin`
+
+log "Started"
+log "COMMAND: $CNI_COMMAND"
+log "ENV [begin]"
+log_env
+log "ENV [end]"
+log "INPUT [begin]"
+log $INPUT
+log "INPUT [end]"
+
+case $CNI_COMMAND in
+ADD)
+    mkdir -p /var/run/netns/
+    ln -sfT $CNI_NETNS /var/run/netns/$CNI_CONTAINERID
+    log "--- ADD --"
+    log "--- CNI_CONTAINERID = $CNI_CONTAINERID ---"
+    POD=$(get_args | get_pod)
+    log "--- POD = $POD ---"
+    NAMESPACE=$(get_args | get_pod_ns)
+    log "--- NAMESPACE = $NAMESPACE ---"
+    KUBEARGS="$KUBEARGS --namespace=$NAMESPACE"
+    NSPID=$(get_nspid "$CNI_NETNS")
+    log "--- NSPID = $NSPID ---"
+    #IP=$(kubectl $KUBEARGS get pod $POD -o json | jqempty 'metadata.annotations."MYCNI/IP"' )
+    IP=10.20.30.40
+    log "--- StaticIP = $IP ---"
+    #ITABLE=$(kubectl $KUBEARGS get pod $POD -o json | jqempty 'metadata.annotations."MYCNI/ITABLE"' )
+    ITABLE=200
+    log "--- iTable = $ITABLE ---"
+    PTPADDR=$(get_config_item ptp_address)
+    log "--- PTP = $PTPADDR ---"
+    log "--- CNI_IFNAME = $CNI_IFNAME ---"
+
+    # Setting up the networking
+    ip link add "v-${NSPID}" type veth peer name "${CNI_IFNAME}"
+    ip link set "${CNI_IFNAME}" netns ${CNI_CONTAINERID}
+    ip netns exec $CNI_CONTAINERID ip link set lo up
+    ip netns exec $CNI_CONTAINERID ip link set $CNI_IFNAME up
+    ip netns exec $CNI_CONTAINERID ip addr add $IP peer $PTPADDR dev $CNI_IFNAME
+    ip netns exec $CNI_CONTAINERID ip ro add default via $PTPADDR table $ITABLE
+    ip link set "v-${NSPID}" up
+
+    mac=$(ip netns exec $CNI_CONTAINERID ip link show $CNI_IFNAME | awk '/ether/ {print $2}')
+    address="${IP}/32"
+    output="{
+  \"cniVersion\": \"0.3.1\",
+  \"interfaces\": [                                            
+      {
+          \"name\": \"${CNI_IFNAME}\",
+          \"mac\": \"${mac}\",                            
+          \"sandbox\": \"${CNI_NETNS}\" 
+      }
+  ],
+  \"ips\": [
+      {
+          \"version\": \"4\",
+          \"address\": \"${address}\",
+          \"interface\": 0 
+      }
+  ]
+}"
+    log "----- OUTPUT -----"
+    log $output
+    # Restore stdout - ready to talk back to kubernetes
+    exec 1>&6
+    echo -n $output
+    
+;;
+
+DEL)
+    rm -rf /var/run/netns/$CNI_CONTAINERID || e=1
+    exec 1>&6
+;;
+
+GET)
+;;
+
+VERSION)
+echo '{
+  "cniVersion": "0.3.1", 
+  "supportedVersions": [ "0.3.0", "0.3.1", "0.4.0" ] 
+}'
+;;
+
+*)
+  echo "Unknown cni command: $CNI_COMMAND" 
+  exit 1
+;;
+
+esac
+# normal exit shouldn't trigger trap
+trap - EXIT
+
