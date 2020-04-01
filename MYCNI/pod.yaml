@@ -4,7 +4,8 @@ metadata:
   name: mycnisample
   annotations:
     k8s.v1.cni.cncf.io/networks: mycni
-    my.cni/ip: 10.20.30.40
+    my.cni/ip: "10.20.30.40"
+    my.cni/itable: "200"
 spec:
   containers:
   - name: mycnisample

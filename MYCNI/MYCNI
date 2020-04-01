@@ -26,10 +26,6 @@ get_config_item    () { echo $INPUT | jq -r ".${1}"; }
 log                () { echo "$*"; }
 log_env            () { env; }
 
-jqempty () {
-    jq -r 'if .${1} then .${1} else empty end'
-}
-
 die () {
     echo $1
     # Restore stdout - before reporting an error to Kube
@@ -64,26 +60,48 @@ ADD)
     log "--- POD = $POD ---"
     NAMESPACE=$(get_args | get_pod_ns)
     log "--- NAMESPACE = $NAMESPACE ---"
-    KUBEARGS="$KUBEARGS --namespace=$NAMESPACE"
     NSPID=$(get_nspid "$CNI_NETNS")
     log "--- NSPID = $NSPID ---"
-    #IP=$(kubectl $KUBEARGS get pod $POD -o json | jqempty 'metadata.annotations."MYCNI/IP"' )
-    IP=10.20.30.40
+    API_URL=$(get_config_item api_url)
+    API_CERT=$(get_config_item api_cert)
+    URL="$API_URL/api/v1/namespaces/$NAMESPACE/pods/$POD"
+    log "--- URL = $URL ---"
+    POD_DATA=$(curl -s --cacert /etc/kubernetes/ssl/ca.crt --cert $API_CERT $URL)
+    log "POD_DATA [begin]"
+    log $POD_DATA
+    log "POD_DATA [end]"
+    IP=$(echo -n $POD_DATA | jq -r 'if .metadata.annotations."my.cni/ip" then .metadata.annotations."my.cni/ip" else empty end')
     log "--- StaticIP = $IP ---"
-    #ITABLE=$(kubectl $KUBEARGS get pod $POD -o json | jqempty 'metadata.annotations."MYCNI/ITABLE"' )
-    ITABLE=200
+    if [ -z $IP ]; then
+	    die "Unable to allocate IP. Exiting" 1
+    fi
+    ITABLE=$(echo -n $POD_DATA | jq -r 'if .metadata.annotations."my.cni/itable" then .metadata.annotations."my.cni/itable" else empty end')
+    [ -z $ITABLE ] && ITABLE=100
     log "--- iTable = $ITABLE ---"
     PTPADDR=$(get_config_item ptp_address)
     log "--- PTP = $PTPADDR ---"
     log "--- CNI_IFNAME = $CNI_IFNAME ---"
 
+    log "--- HOST IFACE = v-${NSPID} ---"
+
     # Setting up the networking
+    # Creating vETH pair
     ip link add "v-${NSPID}" type veth peer name "${CNI_IFNAME}"
+    # Set container stuf
     ip link set "${CNI_IFNAME}" netns ${CNI_CONTAINERID}
     ip netns exec $CNI_CONTAINERID ip link set lo up
     ip netns exec $CNI_CONTAINERID ip link set $CNI_IFNAME up
     ip netns exec $CNI_CONTAINERID ip addr add $IP peer $PTPADDR dev $CNI_IFNAME
-    ip netns exec $CNI_CONTAINERID ip ro add default via $PTPADDR table $ITABLE
+    ip netns exec $CNI_CONTAINERID ip route add $PTPADDR dev $CNI_IFNAME scope link src $IP table $ITABLE
+    ip netns exec $CNI_CONTAINERID ip route add default via $PTPADDR table $ITABLE
+    ip netns exec $CNI_CONTAINERID ip rule add pref ${ITABLE}1 from $IP lookup $ITABLE
+    ip netns exec $CNI_CONTAINERID ip rule add pref ${ITABLE}2 from $IP blackhole
+    ip netns exec $CNI_CONTAINERID ip rule add pref ${ITABLE}9 iif $CNI_IFNAME blackhole
+    # Set host stuff
+    # Create custom VRF if not present, and add interface
+    # TODO
+    # Add IP
+    ip addr add $PTPADDR peer $IP dev v-${NSPID}
     ip link set "v-${NSPID}" up
 
     mac=$(ip netns exec $CNI_CONTAINERID ip link show $CNI_IFNAME | awk '/ether/ {print $2}')
