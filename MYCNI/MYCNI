@@ -87,24 +87,32 @@ ADD)
     # Setting up the networking
     # Creating vETH pair
     ip link add "v-${NSPID}" type veth peer name "${CNI_IFNAME}"
+    # Fix Mac Address of host iface
+    FIXMAC="ee:ee:ee:ee:ee:ee"
+    ip link set v-${NSPID} address $FIXMAC
     # Set container stuf
     ip link set "${CNI_IFNAME}" netns ${CNI_CONTAINERID}
     ip netns exec $CNI_CONTAINERID ip link set lo up
+    ip netns exec $CNI_CONTAINERID sysctl net.ipv4.conf.$CNI_IFNAME.route_localnet=1
     ip netns exec $CNI_CONTAINERID ip link set $CNI_IFNAME up
     ip netns exec $CNI_CONTAINERID ip addr add $IP peer $PTPADDR dev $CNI_IFNAME
+    ip netns exec $CNI_CONTAINERID ip neigh add to $PTPADDR dev $CNI_IFNAME lladdr $FIXMAC
     ip netns exec $CNI_CONTAINERID ip route add $PTPADDR dev $CNI_IFNAME scope link src $IP table $ITABLE
     ip netns exec $CNI_CONTAINERID ip route add default via $PTPADDR table $ITABLE
     ip netns exec $CNI_CONTAINERID ip rule add pref ${ITABLE}1 from $IP lookup $ITABLE
     ip netns exec $CNI_CONTAINERID ip rule add pref ${ITABLE}2 from $IP blackhole
     ip netns exec $CNI_CONTAINERID ip rule add pref ${ITABLE}9 iif $CNI_IFNAME blackhole
+    # Get MAC
+    mac=$(ip netns exec $CNI_CONTAINERID ip link show $CNI_IFNAME | awk '/ether/ {print $2}')
     # Set host stuff
     # Create custom VRF if not present, and add interface
     # TODO
-    # Add IP
+    # Add IP & arp entry
     ip addr add $PTPADDR peer $IP dev v-${NSPID}
+    sysctl net.ipv4.conf.v-${NSPID}.route_localnet=1
     ip link set "v-${NSPID}" up
+    ip neigh add to $IP dev v-${NSPID} lladdr $mac
 
-    mac=$(ip netns exec $CNI_CONTAINERID ip link show $CNI_IFNAME | awk '/ether/ {print $2}')
     address="${IP}/32"
     output="{
   \"cniVersion\": \"0.3.1\",
