@@ -10,7 +10,7 @@
     * [x] ECMP ingress routing
 * [ ] Sidecar containers
 * [ ] Secrets (i.e. https://kubernetesbyexample.com/secrets/ )
-* [ ] re-deploy cluster, and write steps also for installing ingress (and check docker params)
+* [x] re-deploy cluster, and write steps also for installing ingress (and check docker params)
 * [ ] re-deploy cluster, using HAProxy as API load balancer (see: https://github.com/sguyennet/terraform-vsphere-kubespray )
 * [ ] worker down detector
 * [ ] verify ingress HA and real load balancing / service ECMP routes for `Local` only kind of service
@@ -31,9 +31,15 @@
     * [ ] ElasticSearch
 * [ ] HELM
 * [ ] Kustomize
-* [ ] Multus CNI / Calico / Cilium
+* [ ] Multus CNI
+* [ ] Cilium CNI
+* [ ] Nokia DANM CNI
 * [ ] Envoy Ingress
 * [ ] KubeVirt / KubeEdge
 * [ ] K8S and VRF segmentation
 * [ ] Cluster with multiple overlay/underlay
-* [ ] Geo clustering, clustering interconnect
+* [ ] Geo clustering, clustering interconnect (federation?)
+* [ ] K8S and EVPN
+* [ ] Use of IPVLAN and MACVLAN with Multus
+* [ ] Kubeless Serverless framework
+
