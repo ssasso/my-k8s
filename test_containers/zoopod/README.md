@@ -7,7 +7,7 @@ ENV Vars:
   * See: https://github.com/piuccio/cowsay/tree/master/cows
 * SAY = What the animal will say (default = `Hello %IP%, I am %HOSTNAME%!`). Available replacements:
   * %HOSTNAME% = hostname
-  * %IP% = visitor IP (or expanded from `X-Frowarded-For`)
+  * %IP% = visitor IP (or expanded from `X-Forwarded-For`)
   * %HTTPHOST% = HTTP Host header
   * %DATE% = current date
   * %TIME% = current time
