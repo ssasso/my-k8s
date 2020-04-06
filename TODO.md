@@ -21,6 +21,7 @@
     * https://github.com/nginxinc/kubernetes-ingress/blob/master/docs/nginx-ingress-controllers.md
 * [ ] Traefik ingress
 * [ ] HAProxy ingress
+* [ ] Kong ingress
 * [ ] Health check from Ingress (??)
 * [ ] Read more about Calico (and Kubespray config for it)
     * [ ] keep in mind integration with MetalLB
@@ -29,7 +30,8 @@
     * [ ] MySQL Cluster
     * [ ] PostgreSQL Cluster
     * [ ] ElasticSearch
-* [ ] HELM
+    * [ ] KubeDB Operators
+* [*] HELM
 * [ ] Kustomize
 * [ ] Multus CNI
 * [ ] Cilium CNI
@@ -41,5 +43,6 @@
 * [ ] Geo clustering, clustering interconnect (federation?)
 * [ ] K8S and EVPN
 * [ ] Use of IPVLAN and MACVLAN with Multus
-* [ ] Kubeless Serverless framework
-
+* [*] Kubeless Serverless framework
+* [ ] Custom External Load Balancer (example: F5)
+* [ ] Try EKS deployment with CloudFormation
