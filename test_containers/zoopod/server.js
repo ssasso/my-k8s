@@ -10,6 +10,11 @@ var animals = [ "cat", "daemon", "default", "docker-whale", "elephant2",
     "snoopysleep", "whale" ];
 var default_text = 'Hello %IP%, I am %HOSTNAME%!';
 
+// define Animal on APP startup
+var randanimal = animals[Math.floor(Math.random() * animals.length)];
+var animal = process.env.ANIMAL || randanimal;
+console.log(`Animal identity: ${animal}`);
+
 // Constants
 const PORT = 8080;
 const HOST = '0.0.0.0';
@@ -19,9 +24,6 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.get('/', function(req, res) {
-  var randanimal = animals[Math.floor(Math.random() * animals.length)];
-  var animal = process.env.ANIMAL || randanimal;
-
   var ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   var hostname = os.hostname();
   var httphost = req.headers.host || "<unknown>";
