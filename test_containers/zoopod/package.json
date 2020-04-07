@@ -1,5 +1,5 @@
 {
-  "name": "simple",
+  "name": "zoopod",
   "version": "1.0.0",
   "description": "Simple Node.js on Docker",
   "author": "Stefano Sasso <stesasso@gmail.com>",
