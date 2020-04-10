@@ -80,3 +80,21 @@ You can test it with a fake name resolution:
 curl --resolve animal.app:80:10.247.8.2 http://animal.app
 ```
 
+## Calico and KIND
+You can try Calico networking with KIND.
+
+This is based on: https://alexbrand.dev/post/creating-a-kind-cluster-with-calico-networking/
+
+Deploy KIND with a specific configuration:
+```
+kind create cluster --name cal-1 --config kind-conf-calico.yaml
+kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+kubectl -n kube-system set env daemonset/calico-node FELIX_IGNORELOOSERPF=true
+```
+And verify with:
+```
+kubectl -n kube-system get pods | grep calico-node
+```
+
+Then, you can install MetalLB and other stuff.
+
