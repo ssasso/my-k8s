@@ -6,3 +6,5 @@ My K8S Cluster on VMWare
 * Load Balancer via MetalLB
 * Standard NGINX ingress controller
 
+A smaller version, based on KIND, is available on the `kind-deployment` subdir.
+

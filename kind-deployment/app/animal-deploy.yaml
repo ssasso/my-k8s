@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: animal
+spec:
+  selector:
+    matchLabels:
+      app: animal
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: animal
+    spec:
+      containers:
+      - name: app
+        image: ssasso/zoopod:latest
+        ports:
+          - name: http
+            containerPort: 8080
+            protocol: TCP
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+
