@@ -31,9 +31,10 @@
     * [ ] PostgreSQL Cluster
     * [ ] ElasticSearch
     * [ ] KubeDB Operators
-* [*] HELM
+* [x] HELM
+* [x] KIND mini cluster
 * [ ] Kustomize
-* [ ] Multus CNI
+* [x] Multus CNI
 * [ ] Cilium CNI
 * [ ] Nokia DANM CNI
 * [ ] Envoy Ingress
@@ -43,6 +44,8 @@
 * [ ] Geo clustering, clustering interconnect (federation?)
 * [ ] K8S and EVPN
 * [ ] Use of IPVLAN and MACVLAN with Multus
-* [*] Kubeless Serverless framework
-* [ ] Custom External Load Balancer (example: F5)
-* [ ] Try EKS deployment with CloudFormation
+* [x] Kubeless Serverless framework
+* [ ] Custom External Load Balancer (example: F5)a
+* [ ] AWS: deploy EKS with CFN
+* [ ] AWS: deploy K8S with Kops, and try Lyft cni-ipvlan-vpc-k8s
+
