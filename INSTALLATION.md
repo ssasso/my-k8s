@@ -25,6 +25,13 @@ After installation, you can use generated `admin.conf` file to connect to the cl
 
 Verify with: `kubectl get nodes`.
 
+NOTE: after the configuration, `dockerd`, even if started with `--bridge=none --iptables=false`, did not clean up the iptables rules.
+Hence, this rule can cause problems with Source IP preservation (with the kube-proxy ipvs mode):
+```
+-t nat -A POSTROUTING -s 172.17.0.0/16 ! -o docker0 -j MASQUERADE
+```
+Manual cleanup or reboot will solve this.
+
 Now we have a cluster with Multus and Calico. But we need to install MetalLB.
 ```
 kubectl apply -f https://raw.githubusercontent.com/google/metallb/v0.9.3/manifests/namespace.yaml
